@@ -18,6 +18,9 @@ export class TasksService {
     let tasks = this.getAllTask();
     if (status) {
       tasks = tasks.filter((task) => task.status === status);
+      if (!tasks) {
+        throw new NotFoundException(`Task with ${tasks} not found`);
+      }
     } else if (search) {
       tasks = tasks.filter((task) => {
         if (task.title.includes(search) || task.description.includes(search)) {
@@ -25,6 +28,9 @@ export class TasksService {
         }
         return false;
       });
+    }
+    if (!status) {
+      throw new NotFoundException(`Task with ${status} not found`);
     }
     return tasks;
   }
