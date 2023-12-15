@@ -1,4 +1,4 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Task } from '../tasks/tasks.enity';
 import { CreateTaskDto } from './dto/create-task.dto';
 
