@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 // import { Task } from './tasks.model';
@@ -16,15 +17,22 @@ import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { updateStatusDto } from './dto/update-status-dto';
 import { Task } from './tasks.enity';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUsers } from 'src/auth/get-user.dectorator';
+import { User } from 'src/auth/user.entity';
 
 @Controller('tasks')
+@UseGuards(AuthGuard())
 export class TasksController {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   constructor(private tasksService: TasksService) {}
   @Get()
-  getTasks(@Query() filterDto: GetTasksFilterDto): Promise<Task[]> {
+  getTasks(
+    @Query() filterDto: GetTasksFilterDto,
+    @GetUsers() user: User,
+  ): Promise<Task[]> {
     //thêm điều kiện cho get all tasks và searching only task(taskService.getTaskFilter)
-    return this.tasksService.getTasks(filterDto);
+    return this.tasksService.getTasks(filterDto, user);
   }
   @Get(':id')
   getTaskById(@Param('id') id: string): Promise<Task> {
@@ -32,8 +40,11 @@ export class TasksController {
   }
 
   @Post()
-  createTask(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
-    return this.tasksService.createTask(createTaskDto);
+  createTask(
+    @Body() createTaskDto: CreateTaskDto,
+    @GetUsers() user: User,
+  ): Promise<Task> {
+    return this.tasksService.createTask(createTaskDto, user);
   }
   // @Get(':id')
   // getTaskById(@Param('id') id: string): Task {
